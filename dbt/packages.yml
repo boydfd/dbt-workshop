@@ -1,0 +1,10 @@
+
+packages:
+  - git: "https://github.com/EqualExperts/dbt-unit-testing"
+    revision: v0.2.6
+  - package: dbt-labs/metrics
+    version: 1.4.1
+  - package: dbt-labs/dbt_utils
+    version: 1.0.0
+  - package: elementary-data/elementary
+    version: 0.7.3

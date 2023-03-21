@@ -1,0 +1,23 @@
+FROM python:3.9
+
+RUN python -m pip install --upgrade pip --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+
+ENV DBT_VIRTUAL_ENV=/opt/dbt
+RUN python3 -m venv $DBT_VIRTUAL_ENV
+RUN . $DBT_VIRTUAL_ENV/bin/activate && pip install 'dbt-postgres' --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+RUN . $DBT_VIRTUAL_ENV/bin/activate && pip install 'elementary-data' --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+
+ENV AIRFLOW_VIRTUAL_ENV=/opt/AIRFLOW
+RUN python3 -m venv $AIRFLOW_VIRTUAL_ENV
+ENV PATH="$AIRFLOW_VIRTUAL_ENV/bin:$PATH"
+
+RUN pip install 'wtforms==2.3.3' --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+RUN pip install 'apache-airflow[postgres] > 2.2.5' --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+RUN pip install 'SQLAlchemy' --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+
+
+RUN mkdir /project
+COPY scripts/airflow/ /project/scripts/
+
+RUN chmod +x /project/scripts/init.sh
+ENTRYPOINT [ "/project/scripts/init.sh" ]

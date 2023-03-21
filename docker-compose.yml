@@ -1,0 +1,60 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    command: postgres -c password_encryption=md5
+    environment:
+      POSTGRES_INITDB_ARGS: "--auth-local=md5"
+      POSTGRES_PASSWORD: postgres-password
+      POSTGRES_USER : postgres
+      POSTGRES_DB : postgres
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - ./scripts/postgres:/docker-entrypoint-initdb.d
+
+  superset:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile-superset
+    restart: always
+    environment:
+      SUPERSET_SECRET_KEY: '9iKAAnNsf8rB8/RF0l8h5+VzhaVdpFOSLUksP1rraAEy9nMawU05LA5x'
+    depends_on:
+      - postgres
+    ports:
+      - 8088:8088
+
+  airflow:
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile-airflow2
+    restart: always
+    environment:
+      DBT_PROFILES_DIR: /dbt
+      AIRFLOW_HOME: /airflow
+      AIRFLOW__CORE__DAGS_FOLDER: /airflow/dags
+      AIRFLOW__CORE__PARALLELISM: 4
+      AIRFLOW__CORE__DAG_CONCURRENCY: 4
+      AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG: 4
+      # AIRFLOW__ADMIN__HIDE_SENSITIVE_VARIABLE_FIELDS: False
+      # Postgres details need to match with the values defined in the postgres-airflow service
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow-password
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: airflow
+      # postgres-dbt connection details. Required for the inital loading of seed data
+      # Credentials need to match with service postgres-dbt
+      DBT_POSTGRES_PASSWORD: dbt-password
+      DBT_POSTGRES_USER : dbt
+      DBT_POSTGRES_DB : dbt
+      DBT_POSTGRES_HOST: postgres
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    volumes:
+      - ./dbt:/dbt
+      - ./airflow:/airflow

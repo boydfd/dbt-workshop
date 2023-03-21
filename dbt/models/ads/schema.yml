@@ -1,0 +1,59 @@
+version: 2
+
+metrics:
+ - name: rolling_pipeline_build
+   label: pipeline build
+   model: ref('ads_pipeline_width')
+   description: "The 14 day rolling count of paying customers using the product"
+
+   calculation_method: count_distinct
+   expression: id
+
+   timestamp: date
+   time_grains: [day, week, month, quarter, year]
+
+   dimensions:
+     - trigger_type
+     - platform
+     - age
+     - ip
+
+   window:
+     count: 14
+     period: day
+
+   # general properties
+   config:
+     enabled: true
+     treat_null_values_as_zero: true
+
+   meta: {team: ITT}
+# - name: rolling_pipeline_build_daily
+#   label: pipeline build
+#   model: ref('ads_pipeline_width_daily')
+#   description: "The 14 day rolling count of paying customers using the product"
+#
+#   calculation_method: count_distinct
+#   expression: id
+#
+#   timestamp: updated_at
+#   time_grains: [day, week, month, quarter, year]
+#
+#   dimensions:
+#     - agent_label
+#     - pipeline_as_code
+#     - need_display
+#     - branch
+#     - label
+#     - version
+#
+#   window:
+#     count: 14
+#     period: day
+#
+#   # general properties
+#   config:
+#     enabled: true
+#     treat_null_values_as_zero: true
+#
+#   meta: {team: ITT}

@@ -1,0 +1,14 @@
+FROM python:3.9
+RUN python -m pip install --upgrade pip --index-url https://pypi.mirrors.ustc.edu.cn/simple/
+RUN pip install --index-url https://pypi.mirrors.ustc.edu.cn/simple/ 'dbt-postgres' 'elementary-data'
+RUN pip install --index-url https://pypi.mirrors.ustc.edu.cn/simple/ 'wtforms==2.3.3'
+RUN pip install --index-url https://pypi.mirrors.ustc.edu.cn/simple/ 'apache-airflow[postgres] == 2.2.5'
+RUN pip install --index-url https://pypi.mirrors.ustc.edu.cn/simple/ 'SQLAlchemy==1.3.23'
+
+
+
+RUN mkdir /project
+COPY scripts/airflow/ /project/scripts/
+
+RUN chmod +x /project/scripts/init.sh
+ENTRYPOINT [ "/PROJECT/scripts/init.sh" ]

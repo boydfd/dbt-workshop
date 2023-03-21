@@ -1,0 +1,6 @@
+version: 2
+
+models:
+   - name: pipeline_build_fact
+     schema: dbt_dwd
+     description: This table for pipeline fact table

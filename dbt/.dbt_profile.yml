@@ -1,0 +1,23 @@
+dbt_demo:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      port: 5432
+      database: dbt
+      schema: dbt
+      user: dbt
+      password: dbt-password
+
+elementary:
+  outputs:
+    default:
+      type: postgres
+      host: postgres
+      port: 5432
+      user: dbt
+      password: dbt-password
+      dbname: dbt
+      schema: dbt
+      threads: 1
